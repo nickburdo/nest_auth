@@ -11,6 +11,8 @@ Created based on the video [https://www.youtube.com/watch?v=TAYW3t1ajAY&ab_chann
 ```npm
 $ nest new auth
 ```
+In the `main.ts` file define global prefix (`'api'`) and set server port (`5000`)  
+
 Remove `AppController` and `AppService` (remove imports in the `AppModule` and delete files)  
 
 Configure `.eslintrs.js` and `.prettierrc`  
@@ -62,17 +64,31 @@ Set `PrismaModule` as global with `@Global()` decorator to prevent import `Prism
 
 Add Prisma aliases into `tsconfig.json` file  
 
-
-
 ### Create CRUD for Users
 Generate resource
 ```npm
 $ nest g res
 ```
 
-Add Users aliases into `tsconfig.json` file
+Add Users aliases into `tsconfig.json` file  
 
-### 
+Define Users DTO  
+
+Inject `PrismaService` into `UsersService`  
+
+Implement methods in the `UsersService` using `PrismaService`
+
+### Hashing Passwords
+install `bcrypt` and his types
+```npm
+$ npm install bcrypt
+$ npm install -D @types/bcrypt
+```
+In the `UsersService` create private method that will returns hashed passwords  
+
+Implement hash password method in the `create()` and `update()` methods
+
+### Check Users endpoints in the `UsersController`
 
 *************************
 ## Prisma Next steps:
