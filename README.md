@@ -29,7 +29,9 @@ $ docker-compose up -d
 ```
 Define `DATABASE_URL` in the `.env` file according to data in the `docker-compose.yml` file  
 
-### Initialize `Prisma`
+### Initialize Prisma
+[Nest Prisma doc](https://docs.nestjs.com/recipes/prisma)
+
 ```npm
 $ npx prisma init
 ```
@@ -46,7 +48,31 @@ $ npx prisma migrate dev --name init
 Install `Prisma` and `PrismaClient` **if necessary**.  
 *Usually they are installed automatically with the command `npx prisma init`*  
 
+Create Prisma module and service
+```npm
+$ nest g mo prisma 
+$ nest g s prisma
+```
 
+Implement `PrismaService` according to Nest Prisma documentation  
+
+Export `PrismaService` in the `PrismaModule`  
+
+Set `PrismaModule` as global with `@Global()` decorator to prevent import `PrismaModule` in each project module.  
+
+Add Prisma aliases into `tsconfig.json` file  
+
+
+
+### Create CRUD for Users
+Generate resource
+```npm
+$ nest g res
+```
+
+Add Users aliases into `tsconfig.json` file
+
+### 
 
 *************************
 ## Prisma Next steps:
