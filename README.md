@@ -261,6 +261,14 @@ Update the `remove()` method in `UsersService`:
 
 At the `remove` endpoint in the `UserController`, get the current user data and pass it to the `remove()` service method.
 
+### Logout
+
+In the `AuthService` create method to remove `refreshToken` in the database.  
+
+In the `AuthController` create `GET/logout` endpoint.  
+
+
+ 
 
 
 

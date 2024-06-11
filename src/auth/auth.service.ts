@@ -63,6 +63,10 @@ export class AuthService {
     return this.generateTokens(user, agent);
   }
 
+  async deleteRefreshToken(token: string) {
+    return this.prisma.token.delete({ where: { token: token } }).catch((error) => this.handleError(error, this.logger));
+  }
+
   private async getRefreshToken(userId: string, agent: string): Promise<Token> {
     const token = await this.prisma.token.findFirst({ where: { userId, userAgent: agent } });
 
