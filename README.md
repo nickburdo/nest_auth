@@ -249,6 +249,19 @@ For endpoints in the `UserController` except `delete` and for `register` endpoin
 - define endpoint methods as `async` and use `await` for get data from Prisma
 - change `unput` variables with `new UserEntity(user)` expression  
 
+### Endpoints limitation
+Create `@CurrentUser` decorator:
+- create file `libs/common/src/decorators/current-user.decorator.ts`
+- define `CurrentUser` decorator
+- export `CurrentUser` decorator in the `libs/common/src/decorators/index.ts`  
+
+Update the `remove()` method in `UsersService`:
+- add the `currentUser` parameter to the method signature
+- set conditions for the delete action
+
+At the `remove` endpoint in the `UserController`, get the current user data and pass it to the `remove()` service method.
+
+
 
 
 

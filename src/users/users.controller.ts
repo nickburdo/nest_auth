@@ -1,3 +1,5 @@
+import { JwtPayload } from '@auth/interfaces';
+import { CurrentUser } from '@common/decorators';
 import {
   Controller,
   Get,
@@ -46,8 +48,8 @@ export class UsersController {
   }
 
   @Delete(':id')
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
-    await this.usersService.remove(id);
+  async remove(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() currentUser: JwtPayload) {
+    await this.usersService.remove(id, currentUser);
 
     return null;
   }
