@@ -1,11 +1,19 @@
-export enum UserRole {
-  ADMIN = 'ADMIN',
-  USER = 'USER',
-}
+import { Role } from '@prisma/client';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 
 export class CreateUserDto {
-  name?: string;
+  @IsEmail()
+  @IsNotEmpty()
   email: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(6)
   password: string;
-  roles: UserRole[];
+
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  roles: Role[];
 }

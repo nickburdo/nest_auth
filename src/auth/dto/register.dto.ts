@@ -1,5 +1,5 @@
 import { IsPasswordsMatch } from '@common/decorators';
-import { IsEmail, IsNotEmpty, IsString, MinLength, Validate } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength, Validate } from 'class-validator';
 
 export class RegisterDto {
   @IsEmail()
@@ -16,6 +16,7 @@ export class RegisterDto {
   @Validate(IsPasswordsMatch)
   passwordConfirm: string;
 
+  @IsOptional()
   @IsString()
   name?: string;
 }

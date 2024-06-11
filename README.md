@@ -236,6 +236,19 @@ Provide a mechanism for declaring routes as public:
 - In the `AuthGuard` class, override the `canActivate` method to implement public endpoints.
 - decorate public endpoints by Public Decorator
 
+### Remove `password` field from Users response
+[Next Serialization doc](https://docs.nestjs.com/techniques/serialization#exclude-properties)
+
+In the `UserEntity` class (file `src/users/entities/user.entity.ts`), define a constructor 
+that assigns input to the properties of the class. These inputs can be limited by the `@Exclude` decorator.
+
+In the `UserEntity` class decorate `password` field with the `@Exclude` decorator.
+
+For endpoints in the `UserController` except `delete` and for `register` endpoint in the `AuthController`:
+- decorate endpoint with `@UseInterceptors(ClassSerializerInterceptor)` decorator
+- define endpoint methods as `async` and use `await` for get data from Prisma
+- change `unput` variables with `new UserEntity(user)` expression  
+
 
 
 
@@ -289,7 +302,3 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 - Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
 - Website - [https://nestjs.com](https://nestjs.com/)
 - Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).

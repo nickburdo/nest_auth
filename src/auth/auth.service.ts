@@ -3,10 +3,9 @@ import { RegisterDto } from '@auth/dto/register.dto';
 import { Tokens } from '@auth/interfaces';
 import { ConflictException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Token } from '@prisma/client';
+import { Role, Token } from '@prisma/client';
 import { PrismaService } from '@prisma/prisma.service';
-import { UserRole } from '@users/dto/create-user.dto';
-import { User } from '@users/entities/user.entity';
+import { UserEntity } from '@users/entities/user.entity';
 import { UsersService } from '@users/users.service';
 import { compare } from 'bcrypt';
 import { add } from 'date-fns';
@@ -31,7 +30,7 @@ export class AuthService {
     }
 
     return this.userService
-      .create({ name, email, password, roles: [UserRole.USER] })
+      .create({ name, email, password, roles: [Role.USER] })
       .catch((error) => this.handleError(error, this.logger));
   }
 
@@ -88,7 +87,7 @@ export class AuthService {
     return null;
   }
 
-  private async generateTokens(user: User, agent: string): Promise<Tokens> {
+  private async generateTokens(user: UserEntity, agent: string): Promise<Tokens> {
     const { id, email, roles } = user;
     const accessToken = 'Bearer ' + this.jwtService.sign({ id, email, roles });
     const refreshToken = await this.getRefreshToken(id, agent);

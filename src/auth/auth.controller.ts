@@ -5,14 +5,17 @@ import { Cookie, Public, UserAgent } from '@common/decorators';
 import {
   BadRequestException,
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Get,
   HttpStatus,
   Post,
   Res,
   UnauthorizedException,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { UserEntity } from '@users/entities/user.entity';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 
@@ -25,6 +28,7 @@ export class AuthController {
     private readonly configService: ConfigService,
   ) {}
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Public()
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
@@ -34,7 +38,7 @@ export class AuthController {
       throw new BadRequestException(`Fail register user with data ${JSON.stringify(registerDto)}`);
     }
 
-    return user;
+    return new UserEntity(user);
   }
 
   @Public()
