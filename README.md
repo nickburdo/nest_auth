@@ -64,7 +64,7 @@ Set `PrismaModule` as global with `@Global()` decorator to prevent import `Prism
 
 Add Prisma aliases into `tsconfig.json` file  
 
-### Create CRUD for Users
+### Create Users API with CRUD
 Generate resource
 ```npm
 $ nest g res
@@ -90,13 +90,139 @@ Implement hash password method in the `create()` and `update()` methods
 
 ### Check Users endpoints in the `UsersController`
 
-*************************
-## Prisma Next steps:
-1. Set the DATABASE_URL in the .env file to point to your existing database. If your database has no tables yet, read https://pris.ly/d/getting-started
-2. Set the provider of the datasource block in schema.prisma to match your database: postgresql, mysql, sqlite, sqlserver, mongodb or cockroachdb.
-3. Run npx prisma db pull to turn your database schema into a Prisma schema.
-4. Run npx prisma generate to generate the Prisma Client. You can then start querying your database.
-**************************
+### Create Auth API
+Generate resource
+```npm
+$ nest g res
+```
+*`? Would you like to generate CRUD entry points? (Y/n)` - enter "n"*  
+
+Create aliases for `Auth` in the `tsconfig.json` file.  
+
+In the `AuthModule` import `UsersModule`.  
+
+In the `UsersModule` export `UserService` to use it in the import.  
+
+### Add Nest Configuration Module globally in project
+install Nest `ConfigModule`
+```npm
+$ npm i --save @nestjs/config
+```
+
+Import `ConfigModule` globally in the `AppModule`  
+
+*Now you can get the value of an environment variable anywhere in the application by injecting
+`ConfigService` and using its `get()` method*  
+
+### Apply Passport
+[Nest Passport (authentication) doc](https://docs.nestjs.com/recipes/passport)  
+[Nest Passport JWT doc](https://docs.nestjs.com/recipes/passport#jwt-functionality)
+
+Install dependencies
+```npm
+$ npm install --save @nestjs/passport passport @nestjs/jwt passport-jwt
+$ npm install --save-dev @types/passport-jwt
+```
+
+In the `.env` file add `JWT_SECRET` and `JWT_EXPIRES_IN` environment variables  
+
+Prepare options for registering the `JwtModule` module:
+- Create `src/auth/config` folder
+- Create a file `src/config/jwt-module-async-options.ts`
+- Implement in it options for registering the `JwtModule` module
+- Create `src/auth/config/index.ts` file and export the `jwt-module-async-options.ts` file in it
+
+In the `AuthModule` import `PassportModule` and `JwtModule` and then register
+`JwtModule` using `registerAsync()` method  and options from config.  
+
+### Setup DTO validation
+[Nest Validation doc](https://docs.nestjs.com/techniques/validation)
+
+Install dependencies
+```npm
+$ npm i --save class-validator class-transformer
+```
+
+Bind `ValidationPipe` at the application level in the `main.ts` file.
+
+Now we can add a few validation rules in our DTOs.  
+
+
+### Create DTO for register
+
+### Create Custom Validator for passwords compare
+create `common` lib 
+```npm
+$ nest g lib common
+```
+*Set prefix `@common`*  
+
+In the `tsconfig.json` file correct aliases for `common` lib.  
+
+Remove all files in the `libs/common/src` folder.  
+
+Create `libs/common/src/decorators` folder and `is-password-match-constraint.decorator.ts` file in it.  
+
+Create class `IsPasswordsMatch` that implements `ValidatorConstraintInterface`
+and define `validate` and `defaultMessage` methods.  
+
+Create `libs/common/src/decorators/index.ts` file and export 
+`is-password-match-constraint.decorator.ts` in it.  
+
+Apply `IsPasswordsMatch` for validate `passwordConfirm` property in the `RegisterDto` class.  
+
+### Create DTO for login
+
+### Create interface for tokens in `src/auth/intrfasec.ts` file
+
+### Install `uuid` and `date-fns`  libraries
+```npm
+$ npm install uuid
+$  npm install -D @types/uuid
+$  npm install date-fns
+```
+
+### Set up Cookies
+[Nest Cookies doc](https://docs.nestjs.com/techniques/cookies)  
+
+Install `cookie-parser`
+```npm
+$ npm i cookie-parser
+$ npm i -D @types/cookie-parser
+```
+
+Apply the `cookie-parser` middleware as global in the `main.ts` file
+
+### Create Decorators
+Create Cookies Decorator:
+- create `libs/common/src/decorators/cookie.decorators.ts` file
+- implement Cookie Decorator
+- export Cookie Decorator in the `libs/common/src/decorators/index.ts` file  
+
+Create UserAgent Decorator:
+- create `libs/common/src/decorators/user-agent.decorators.ts` file
+- implement UserAgent Decorator
+- export UserAgent Decorator in the `libs/common/src/decorators/index.ts` file  
+
+### Add `user-agent` field to the `tokens` table of database
+Change Prisma Schema  
+
+Generate migration
+```npm
+$ npx prisma migrate dev --name user_agent
+```
+
+### Implement `AuthService`
+Implement `register`, `login` and `refreshTokens()` methods.
+
+### Implement `AuthController`
+Implement `POST/register`, `POST/login` and `GET/refresh-tokens` API endpoints    
+
+
+
+
+
+
 
 
 
