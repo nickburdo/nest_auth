@@ -86,7 +86,7 @@ $ npm install -D @types/bcrypt
 ```
 In the `UsersService` create private method that will returns hashed passwords  
 
-Implement hash password method in the `create()` and `update()` methods
+Define hash password method in the `create()` and `update()` methods
 
 ### Check Users endpoints in the `UsersController`
 
@@ -129,7 +129,7 @@ In the `.env` file add `JWT_SECRET` and `JWT_EXPIRES_IN` environment variables
 Prepare options for registering the `JwtModule` module:
 - Create `src/auth/config` folder
 - Create a file `src/config/jwt-module-async-options.ts`
-- Implement in it options for registering the `JwtModule` module
+- Define in it options for registering the `JwtModule` module
 - Create `src/auth/config/index.ts` file and export the `jwt-module-async-options.ts` file in it
 
 In the `AuthModule` import `PassportModule` and `JwtModule` and then register
@@ -196,12 +196,12 @@ Apply the `cookie-parser` middleware as global in the `main.ts` file
 ### Create Decorators
 Create Cookies Decorator:
 - create `libs/common/src/decorators/cookie.decorators.ts` file
-- implement Cookie Decorator
+- Define Cookie Decorator
 - export Cookie Decorator in the `libs/common/src/decorators/index.ts` file  
 
 Create UserAgent Decorator:
 - create `libs/common/src/decorators/user-agent.decorators.ts` file
-- implement UserAgent Decorator
+- Define UserAgent Decorator
 - export UserAgent Decorator in the `libs/common/src/decorators/index.ts` file  
 
 ### Add `user-agent` field to the `tokens` table of database
@@ -213,10 +213,29 @@ $ npx prisma migrate dev --name user_agent
 ```
 
 ### Implement `AuthService`
-Implement `register`, `login` and `refreshTokens()` methods.
+Define `register`, `login` and `refreshTokens()` methods.
 
 ### Implement `AuthController`
-Implement `POST/register`, `POST/login` and `GET/refresh-tokens` API endpoints    
+Define `POST/register`, `POST/login` and `GET/refresh-tokens` API endpoints    
+
+### Implement protected route
+[Nest Passport Implementing Passport JWT doc](https://docs.nestjs.com/recipes/passport#jwt-functionality)  
+
+Create file `src/auth/jwt.startegy.ts` and define `JwtStrategy` class  
+
+Define `JwtStrategy` as provider in the `AuthModule`  
+
+Create file `src/auth/jwt-auth.guard.ts` and define the `JwtAuthGuard` class which extends the built-in `AuthGuard`
+
+Define `JwtAuthGuard` as provider globally in the `AppModule`  
+
+Provide a mechanism for declaring routes as public:
+- create file `libs/common/src/decorators/public.decorators.ts`
+- define Public Decorator
+- export Public Decorator in the `libs/common/src/decorators/index.ts` file 
+- In the `AuthGuard` class, override the `canActivate` method to implement public endpoints.
+- decorate public endpoints by Public Decorator
+
 
 
 

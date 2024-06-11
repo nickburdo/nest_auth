@@ -1,7 +1,7 @@
 import { LoginDto } from '@auth/dto/login.dto';
 import { RegisterDto } from '@auth/dto/register.dto';
 import { Tokens } from '@auth/interfaces';
-import { Cookie, UserAgent } from '@common/decorators';
+import { Cookie, Public, UserAgent } from '@common/decorators';
 import {
   BadRequestException,
   Body,
@@ -9,12 +9,11 @@ import {
   Get,
   HttpStatus,
   Post,
-  Req,
   Res,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { AuthService } from './auth.service';
 
 const REFRESH_TOKEN = 'refreshToken';
@@ -26,6 +25,7 @@ export class AuthController {
     private readonly configService: ConfigService,
   ) {}
 
+  @Public()
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
     const user = await this.authService.register(registerDto);
@@ -37,6 +37,7 @@ export class AuthController {
     return user;
   }
 
+  @Public()
   @Post('login')
   async login(@Body() loginDto: LoginDto, @Res() response: Response, @UserAgent() agent: string) {
     const tokens = await this.authService.login(loginDto, agent);
@@ -48,6 +49,7 @@ export class AuthController {
     this.setRefreshTokenToCookies(tokens, response);
   }
 
+  @Public()
   @Get('refresh-tokens')
   async refreshTokens(
     @Cookie(REFRESH_TOKEN) refreshToken: string,
