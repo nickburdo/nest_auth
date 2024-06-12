@@ -35,7 +35,7 @@ export class AuthService {
   }
 
   async login(dto: LoginDto, agent: string): Promise<Tokens> {
-    const user = await this.userService.findOne(dto.email).catch((error) => this.handleError(error, this.logger));
+    const user = await this.userService.findOne(dto.email, true).catch((error) => this.handleError(error, this.logger));
     const isPasswordValid = compare(dto.password, user?.password);
 
     if (!user || !isPasswordValid) {

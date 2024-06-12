@@ -1,3 +1,4 @@
+import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
@@ -6,5 +7,6 @@ import { UsersController } from './users.controller';
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService],
+  imports: [CacheModule.register()],
 })
 export class UsersModule {}

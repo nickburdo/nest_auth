@@ -1,21 +1,21 @@
 import { JwtPayload } from '@auth/interfaces';
 import { CurrentUser } from '@common/decorators';
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
-  Delete,
-  ParseUUIDPipe,
-  UseInterceptors,
   ClassSerializerInterceptor,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserEntity } from '@users/entities/user.entity';
-import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {

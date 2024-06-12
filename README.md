@@ -282,19 +282,27 @@ Decorate endpoint that must be accessible for some role with two decorators:
 - `@UseGuards(RolesGuard)`
 - `@Roles(Role.ADMIN)`  
 
+### Caching
+[Nest Caching doc](https://docs.nestjs.com/techniques/caching)
 
+Install required packages
+```npm
+$ npm install @nestjs/cache-manager cache-manager
+```
 
+Import `CacheModule` in the `UsersModule  
 
+*If you get ERROR [ExceptionHandler] lru_cache_1.LRUCache is not a constructor then install 
+early version of `lru-cache`. For example `$ npm i lru-cache@7.5.0`* 
 
+Inject cache manager to `UsersService` using the `CACHE_MANAGER` token  
+*Do not forget import `Cache` from `cache-manager`*  
 
+Implement cache in the `findOne()` method of `UserService`
 
+Reset cache in the `login()` method in the `AuthService`
 
-
-
-
-
-
-
+Delete cache when user delete in the `remove()` method of `UserService`  
 
 
 
