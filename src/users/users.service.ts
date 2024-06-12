@@ -22,7 +22,7 @@ export class UsersService {
     const { password, roles, ...rest } = createUserDto;
     return this.prisma.user.create({
       data: {
-        password: this.hashPassword(password),
+        password: password ? this.hashPassword(password) : null,
         roles: roles || [Role.USER],
         ...rest,
       },

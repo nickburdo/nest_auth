@@ -1,9 +1,17 @@
 import { LoginDto } from '@auth/dto/login.dto';
 import { RegisterDto } from '@auth/dto/register.dto';
 import { Tokens } from '@auth/interfaces';
-import { ConflictException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Role, Token } from '@prisma/client';
+import { AuthProvider, Role, Token } from '@prisma/client';
 import { PrismaService } from '@prisma/prisma.service';
 import { UserEntity } from '@users/entities/user.entity';
 import { UsersService } from '@users/users.service';
@@ -65,6 +73,24 @@ export class AuthService {
 
   async deleteRefreshToken(token: string) {
     return this.prisma.token.delete({ where: { token: token } }).catch((error) => this.handleError(error, this.logger));
+  }
+
+  async googleAuth(email: string, agent: string) {
+    const userExist = await this.userService.findOne(email);
+
+    if (userExist) {
+      return this.generateTokens(userExist, agent);
+    }
+
+    const user = await this.userService
+      .create({ email, roles: [Role.USER], provider: AuthProvider.GOOGLE })
+      .catch((error) => this.handleError(error, this.logger));
+
+    if (!user) {
+      throw new HttpException(`Failed to create user with email ${email} in Google auth`, HttpStatus.BAD_REQUEST);
+    }
+
+    return this.generateTokens(user, agent);
   }
 
   private async getRefreshToken(userId: string, agent: string): Promise<Token> {

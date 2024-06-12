@@ -304,6 +304,68 @@ Reset cache in the `login()` method in the `AuthService`
 
 Delete cache when user delete in the `remove()` method of `UserService`  
 
+### Authentication via Google
+
+Install dependency
+```npm
+$ npm install passport-google-oauth20
+```
+Create `src/auth/strategies/google.strategy.ts` file and implement `GoogleStrategy` class
+
+Get Client ID and Client Secret:
+- goto [Google Console Developer](https://console.cloud.google.com/apis/dashboard)
+- select a project or create a new one (selector in the upper left near the Google Cloud logo)
+- goto Credentials (left menu)
+- click "CREATE CREDENTIALS" button and select "OAuth client ID"
+- select application type "Web application"
+- enter name (for example, :nest-auth")
+- add Authorized JavaScript origin: `http://localhost:5000`
+- add two Authorized redirect URIs: `http://localhost:5000/api/auth/google` and `http://localhost:5000/api/auth/google/callback`
+- click "SAVE" button
+- copy Client ID and Client secret into `.env` file
+
+Add `GoogleStrategy` into `STRATEGIES` array in the `src/auth/strategies/index.ts` file  
+*import `Strategy` from `passport-google-oauth20`*
+
+Create `src/auth/guards/google.guard.ts` file and implement `GoogleGuard` class extends `AuthGuard`  
+
+Add `GoogleGuard` into `GUARDS` array in the `src/auth/guards/index.ts` file  
+
+In the `AuthController` implement two endpoints: `GET/google` and `GET/google/callback` 
+
+Add Axios HTTP Module
+- install dependencies
+```npm install @nest
+$ npm install @nestjs/axios axios
+```
+- in the `AuthModule` import `HttpModule`
+- in the `AuthController` inject `HttpService` 
+
+Correct Prisma schema:
+- in the `User` model make the `password` field optional and add optional `provider` field
+- migrate schema 
+```npm
+$ npx prisma migrate dev --name update_user
+```
+- in the `CreateUserDto` class make the `password` field optional and add optional `provider` field
+- in the `UserEntity` add property `provider` decorated by `@Exclude` decorator
+
+In the `AuthService` create `googleAuth` method
+
+Create helper `handleTimeoutsAndErrors` for catch error in the `libs/common/src/helpers/timeout-error.helper.ts` file  
+
+In the `AuthController` implement `GET/google/success` endpoint with request to Google API
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## Installation

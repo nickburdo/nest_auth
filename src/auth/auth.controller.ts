@@ -1,8 +1,11 @@
 import { LoginDto } from '@auth/dto/login.dto';
 import { RegisterDto } from '@auth/dto/register.dto';
+import { GoogleGuard } from '@auth/guards/google.guard';
 import { RolesGuard } from '@auth/guards/roles.guard';
 import { JwtPayload, Tokens } from '@auth/interfaces';
 import { Cookie, CurrentUser, Public, Roles, UserAgent } from '@common/decorators';
+import { handleTimeoutsAndErrors } from '@common/helpers';
+import { HttpService } from '@nestjs/axios';
 import {
   BadRequestException,
   Body,
@@ -11,6 +14,8 @@ import {
   Get,
   HttpStatus,
   Post,
+  Query,
+  Req,
   Res,
   UnauthorizedException,
   UseGuards,
@@ -19,7 +24,8 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Role } from '@prisma/client';
 import { UserEntity } from '@users/entities/user.entity';
-import { Response } from 'express';
+import { Request, Response } from 'express';
+import { map, mergeMap } from 'rxjs';
 import { AuthService } from './auth.service';
 
 const REFRESH_TOKEN = 'refreshToken';
@@ -29,6 +35,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly configService: ConfigService,
+    private readonly http: HttpService,
   ) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -94,6 +101,29 @@ export class AuthController {
   @Get('current')
   current(@CurrentUser() user: JwtPayload) {
     return user;
+  }
+
+  @Public()
+  @UseGuards(GoogleGuard)
+  @Get('google')
+  googleAuth() {}
+
+  @Public()
+  @UseGuards(GoogleGuard)
+  @Get('google/callback')
+  googleAuthCallback(@Req() request: Request, @Res() response: Response) {
+    const token = request.user['accessToken'];
+    return response.redirect(`http://localhost:5000/api/auth/success?token=${token}`);
+  }
+
+  @Public()
+  @Get('success')
+  success(@Query('token') token: string, @UserAgent() agent: string, @Res() response: Response) {
+    return this.http.get(`https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${token}`).pipe(
+      mergeMap(({ data: { email } }) => this.authService.googleAuth(email, agent)),
+      map((data) => this.setRefreshTokenToCookies(data, response)),
+      handleTimeoutsAndErrors(),
+    );
   }
 
   private setRefreshTokenToCookies(tokens: Tokens, res: Response) {
