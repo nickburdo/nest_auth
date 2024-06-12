@@ -1,7 +1,8 @@
 import { LoginDto } from '@auth/dto/login.dto';
 import { RegisterDto } from '@auth/dto/register.dto';
-import { Tokens } from '@auth/interfaces';
-import { Cookie, Public, UserAgent } from '@common/decorators';
+import { RolesGuard } from '@auth/guards/roles.guard';
+import { JwtPayload, Tokens } from '@auth/interfaces';
+import { Cookie, CurrentUser, Public, Roles, UserAgent } from '@common/decorators';
 import {
   BadRequestException,
   Body,
@@ -12,9 +13,11 @@ import {
   Post,
   Res,
   UnauthorizedException,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Role } from '@prisma/client';
 import { UserEntity } from '@users/entities/user.entity';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
@@ -84,6 +87,13 @@ export class AuthController {
     await this.authService.deleteRefreshToken(refreshToken);
     response.cookie(REFRESH_TOKEN, '', { httpOnly: true, expires: new Date() });
     response.sendStatus(HttpStatus.OK);
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles(Role.USER)
+  @Get('current')
+  current(@CurrentUser() user: JwtPayload) {
+    return user;
   }
 
   private setRefreshTokenToCookies(tokens: Tokens, res: Response) {

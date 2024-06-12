@@ -221,7 +221,7 @@ Define `POST/register`, `POST/login` and `GET/refresh-tokens` API endpoints
 ### Implement protected route
 [Nest Passport Implementing Passport JWT doc](https://docs.nestjs.com/recipes/passport#jwt-functionality)  
 
-Create file `src/auth/jwt.startegy.ts` and define `JwtStrategy` class  
+Create file `src/auth/strategies/jwt.startegy.ts` and define `JwtStrategy` class  
 
 Define `JwtStrategy` as provider in the `AuthModule`  
 
@@ -267,8 +267,24 @@ In the `AuthService` create method to remove `refreshToken` in the database.
 
 In the `AuthController` create `GET/logout` endpoint.  
 
+### Roles Decorator
+[Nest Authorisation RBAC implementation](https://docs.nestjs.com/security/authorization#basic-rbac-implementation)
 
- 
+Create file `libs/common/src/decorators/roles.decorators.ts`  
+
+Define Role Decorator  
+
+Export Role Decorator in the `libs/common/src/decorators/index.ts` file  
+
+Create Roles Guard in the `src/auth/guards/roles.guard.ts` file  
+
+Decorate endpoint that must be accessible for some role with two decorators:
+- `@UseGuards(RolesGuard)`
+- `@Roles(Role.ADMIN)`  
+
+
+
+
 
 
 
